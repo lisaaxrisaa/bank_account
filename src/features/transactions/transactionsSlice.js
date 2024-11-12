@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 /**
  * Each transaction is recorded as an object with the following properties.
@@ -11,7 +11,11 @@ import { createSlice } from "@reduxjs/toolkit";
 // TODO: Set initial state to have a balance of 0 and an empty array of transactions.
 
 /** @type {{balance: number, history: Transaction[]}} */
-const initialState = {};
+
+const initialState = {
+  balance: 0,
+  transactions: [],
+};
 
 /* TODO
 Add two reducers  to the transactions slice: "deposit" and "transfer".
@@ -24,13 +28,29 @@ Refer to the "withdrawal" reducer, which is already implemented for you.
 */
 
 const transactionsSlice = createSlice({
-  name: "transactions",
+  name: 'transactions',
   initialState,
   reducers: {
+    deposit: (state, { payload }) => {
+      state.balance += payload.amount;
+      state.transactions.push({
+        type: 'deposit',
+        amount: payload.amount,
+        balance: state.balance,
+      });
+    },
+    transfer: (state, { payload }) => {
+      state.balance -= payload.amount;
+      state.transactions.push({
+        type: 'transfer',
+        amount: payload.amount,
+        balance: state.balance,
+      });
+    },
     withdrawal: (state, { payload }) => {
       state.balance -= payload.amount;
-      state.history.push({
-        type: "withdrawal",
+      state.transactions.push({
+        type: 'withdrawal',
         amount: payload.amount,
         balance: state.balance,
       });
@@ -41,6 +61,6 @@ const transactionsSlice = createSlice({
 export const { deposit, withdrawal, transfer } = transactionsSlice.actions;
 
 export const selectBalance = (state) => state.transactions.balance;
-export const selectHistory = (state) => state.transactions.history;
+export const selectHistory = (state) => state.transactions.transactions;
 
 export default transactionsSlice.reducer;
